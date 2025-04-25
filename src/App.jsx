@@ -10,7 +10,7 @@ function Model({ url }) {
   useFrame(() => {
     if (modelRef.current) {
       // You can adjust scale if needed
-      modelRef.current.scale.set(1.5, 1.5, 1.5);
+      modelRef.current.scale.set(1.2, 1.2, 1.2);
     }
   });
   
