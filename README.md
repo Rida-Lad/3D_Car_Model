@@ -1,12 +1,95 @@
-# React + Vite
+# 3D Car Model Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![3D Car Model Viewer](./public/screenshot.png)
 
-Currently, two official plugins are available:
+## About
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A sleek, interactive 3D car model viewer built with React, Three.js, and React Three Fiber. This application showcases a Ferrari 599 GTO model in an elegant, well-lit environment with intuitive controls.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Interactive 3D car model visualization
+- Elegant UI with responsive design for all devices
+- Smooth orbital controls for 360° viewing
+- Optimized mobile experience
+- Beautiful lighting configuration for optimal model presentation
+
+## Technologies
+
+- React
+- Three.js
+- React Three Fiber
+- React Three Drei
+- Tailwind CSS
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14.0 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/3d-car-model-viewer.git
+   cd 3d-car-model-viewer
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Start the development server
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
+
+4. Open your browser and navigate to `http://localhost:3000`
+
+## Project Structure
+
+```
+public/
+├── ferrari_599_gto.glb  # 3D model file
+├── screenshot.png       # Project screenshot
+src/
+├── components/
+│   └── CarModelViewer.jsx  # Main 3D viewer component
+├── App.js
+└── index.js
+```
+
+## Usage
+
+```jsx
+import CarModelViewer from './components/CarModelViewer';
+
+function App() {
+  return (
+    <div className="App">
+      <CarModelViewer />
+    </div>
+  );
+}
+```
+
+## Customization
+
+- To change the 3D model, replace the GLB file in the public folder and update the path in the `Model` component
+- Adjust lighting parameters in the `Canvas` component for different visual effects
+- Modify the styling using Tailwind classes to match your design preferences
+
+## License
+
+MIT
+
+## Author
+
+Made with ❤️ by Rida Ladib
