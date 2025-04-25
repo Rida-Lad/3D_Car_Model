@@ -1,19 +1,21 @@
 import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Environment, Center, useDetectGPU } from '@react-three/drei';
+import { useGLTF, OrbitControls, Environment, useDetectGPU } from '@react-three/drei';
 
 function Model({ url }) {
-  const { scene } = useGLTF(url, true); // Enable draco compression
+  const { scene } = useGLTF(url, true);
   const modelRef = useRef();
   const gpuTier = useDetectGPU();
 
   useEffect(() => {
     if (modelRef.current) {
-      // Adjust scale based on device and GPU tier
+      // Set fixed scale based on device capabilities
       const scale = gpuTier.tier < 2 ? 0.6 : window.innerWidth < 640 ? 0.8 : 1.2;
       modelRef.current.scale.set(scale, scale, scale);
       
-      // Simplify materials for lower-end devices
+      // Position model at scene center
+      modelRef.current.position.set(0, 0, 0);
+
       if (gpuTier.tier < 2) {
         modelRef.current.traverse((child) => {
           if (child.isMesh) {
@@ -25,15 +27,12 @@ function Model({ url }) {
     }
   }, [gpuTier]);
 
-  return (
-    <Center>
-      <primitive ref={modelRef} object={scene} />
-    </Center>
-  );
+  return <primitive ref={modelRef} object={scene} />;
 }
 
 function CarModelViewer() {
   const gpuTier = useDetectGPU();
+  const controlsRef = useRef();
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen">
@@ -48,11 +47,12 @@ function CarModelViewer() {
               powerPreference: gpuTier.tier < 2 ? "low-power" : "high-performance"
             }}
             camera={{ 
-              position: [0, 2, window.innerWidth < 640 ? 12 : 8], 
-              fov: window.innerWidth < 640 ? 40 : 50 
+              position: [0, 1.5, window.innerWidth < 640 ? 10 : 7], 
+              fov: window.innerWidth < 640 ? 45 : 50,
+              near: 0.1,
+              far: 1000
             }}
           >
-            {/* Simplified lighting setup */}
             <ambientLight intensity={1} />
             <directionalLight 
               position={[10, 10, 5]} 
@@ -69,14 +69,16 @@ function CarModelViewer() {
             </Suspense>
             
             <OrbitControls 
-              target={[0, 0, 0]} 
+              ref={controlsRef}
+              target={[0, 0.5, 0]} // Adjusted target point for consistent view
               enableZoom={false}
               enablePan={false}
               enableDamping={true}
               dampingFactor={0.2}
+              minDistance={window.innerWidth < 640 ? 8 : 6} // Fixed min/max distance
+              maxDistance={window.innerWidth < 640 ? 12 : 10}
               maxPolarAngle={Math.PI/2}
-              autoRotate={gpuTier.tier > 1}
-              autoRotateSpeed={0.5}
+              autoRotate={false} // Disabled auto-rotate for consistent control
             />
           </Canvas>
         </div>
