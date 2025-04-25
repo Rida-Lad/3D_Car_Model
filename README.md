@@ -86,10 +86,6 @@ function App() {
 - Adjust lighting parameters in the `Canvas` component for different visual effects
 - Modify the styling using Tailwind classes to match your design preferences
 
-## License
-
-MIT
-
 ## Author
 
 Made with ❤️ by Rida Ladib
