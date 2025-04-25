@@ -14,7 +14,7 @@ function App() {
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
         <Suspense fallback={null}>
-          <Model url="/path/to/your/model.glb" />
+          <Model url="ferrari_599_gto.glb" />
         </Suspense>
         <OrbitControls />
       </Canvas>
