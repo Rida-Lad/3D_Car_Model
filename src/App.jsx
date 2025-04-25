@@ -1,9 +1,9 @@
 import React, { Suspense, useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Environment, useDetectGPU, Html } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, OrbitControls, Environment, useDetectGPU } from '@react-three/drei';
 
 function Model({ url, onProgress }) {
-  const { scene, progress } = useGLTF(url, true, undefined, (xhr) => {
+  const { scene } = useGLTF(url, true, undefined, (xhr) => {
     onProgress((xhr.loaded / xhr.total) * 100);
   });
   const modelRef = useRef();
@@ -33,12 +33,20 @@ function CarModelViewer() {
   const gpuTier = useDetectGPU();
   const controlsRef = useRef();
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [minimumLoadTimePassed, setMinimumLoadTimePassed] = useState(false);
   const isMobile = window.innerWidth < 768;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinimumLoadTimePassed(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen">
       {/* Loading Overlay */}
-      {loadingProgress < 100 && (
+      {(loadingProgress < 100 || !minimumLoadTimePassed) && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
           <div className="text-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -54,8 +62,8 @@ function CarModelViewer() {
           
           {isMobile && (
             <div className="max-w-xs text-sm text-gray-600 mt-4 px-4 py-2 bg-yellow-100 rounded-lg">
-              ⚠️ Please note: Mobile devices might experience some lag due to 
-              GPU limitations. For best experience, view on a desktop device.
+              ⚠️ Mobile devices might experience slight lag due to GPU limitations.
+              For optimal experience, consider viewing on a desktop.
             </div>
           )}
         </div>
