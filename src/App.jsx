@@ -2,10 +2,8 @@ import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF, OrbitControls, Environment, useDetectGPU } from '@react-three/drei';
 
-function Model({ url, onProgress }) {
-  const { scene } = useGLTF(url, true, undefined, (xhr) => {
-    onProgress((xhr.loaded / xhr.total) * 100);
-  });
+function Model({ url, onLoaded }) {
+  const { scene } = useGLTF(url, true);
   const modelRef = useRef();
   const gpuTier = useDetectGPU();
 
@@ -24,7 +22,8 @@ function Model({ url, onProgress }) {
         });
       }
     }
-  }, [gpuTier]);
+    onLoaded();
+  }, [gpuTier, onLoaded]);
 
   return <primitive ref={modelRef} object={scene} />;
 }
@@ -32,30 +31,46 @@ function Model({ url, onProgress }) {
 function CarModelViewer() {
   const gpuTier = useDetectGPU();
   const controlsRef = useRef();
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [minimumLoadTimePassed, setMinimumLoadTimePassed] = useState(false);
+  const [fakeProgress, setFakeProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinimumLoadTimePassed(true);
-    }, 4000);
-    return () => clearTimeout(timer);
+    // Fake loading animation
+    const interval = setInterval(() => {
+      setFakeProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 40); // 4 seconds total (40ms * 100 steps)
+
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (fakeProgress === 100) {
+      // Add slight delay after progress completes
+      const timeout = setTimeout(() => setIsLoading(false), 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [fakeProgress]);
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen">
       {/* Loading Overlay */}
-      {(loadingProgress < 100 || !minimumLoadTimePassed) && (
+      {isLoading && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
           <div className="text-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Loading Model... {Math.round(loadingProgress)}%
+              Loading Model... {fakeProgress}%
             </h2>
             <div className="w-48 h-2 bg-gray-200 rounded-full mx-auto overflow-hidden">
               <div 
                 className="h-full bg-blue-500 transition-all duration-300" 
-                style={{ width: `${loadingProgress}%` }}
+                style={{ width: `${fakeProgress}%` }}
               />
             </div>
           </div>
@@ -63,7 +78,7 @@ function CarModelViewer() {
           {isMobile && (
             <div className="max-w-xs text-sm text-gray-600 mt-4 px-4 py-2 bg-yellow-100 rounded-lg">
               ⚠️ Mobile devices might experience slight lag due to GPU limitations.
-              For optimal experience, consider viewing on a desktop.
+              For optimal experience, view on a desktop.
             </div>
           )}
         </div>
@@ -95,7 +110,7 @@ function CarModelViewer() {
             <Suspense fallback={null}>
               <Model 
                 url="/ferrari_599_gto.glb" 
-                onProgress={setLoadingProgress} 
+                onLoaded={() => setIsLoading(false)}
               />
               <Environment 
                 preset={gpuTier.tier < 2 ? "dawn" : "sunset"}
