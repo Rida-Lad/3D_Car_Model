@@ -4,7 +4,9 @@ import { useGLTF, OrbitControls, Environment, useDetectGPU } from '@react-three/
 
 function Model({ url, onProgress }) {
   const { scene } = useGLTF(url, true, undefined, (xhr) => {
-    onProgress((xhr.loaded / xhr.total) * 100);
+    // Handle division by zero case
+    const progress = xhr.total > 0 ? (xhr.loaded / xhr.total) * 100 : 0;
+    onProgress(Math.min(100, Math.max(0, progress)));  // Clamp between 0-100
   });
   const modelRef = useRef();
   const gpuTier = useDetectGPU();
