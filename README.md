@@ -88,4 +88,4 @@ function App() {
 
 ## Author
 
-Made with ❤️ by Rida Ladib
+Made by Rida Ladib
