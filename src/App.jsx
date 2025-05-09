@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useEffect, useState } from 'react';
+import  { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF, OrbitControls, Environment, useDetectGPU } from '@react-three/drei';
 
@@ -36,7 +36,6 @@ function CarModelViewer() {
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
-    // Fake loading animation
     const interval = setInterval(() => {
       setFakeProgress(prev => {
         if (prev >= 100) {
@@ -45,14 +44,13 @@ function CarModelViewer() {
         }
         return prev + 1;
       });
-    }, 40); // 4 seconds total (40ms * 100 steps)
+    }, 40); 
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (fakeProgress === 100) {
-      // Add slight delay after progress completes
       const timeout = setTimeout(() => setIsLoading(false), 500);
       return () => clearTimeout(timeout);
     }
@@ -60,7 +58,6 @@ function CarModelViewer() {
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen">
-      {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
           <div className="text-center mb-4">
